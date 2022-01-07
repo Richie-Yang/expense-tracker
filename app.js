@@ -7,6 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const { engine } = require('express-handlebars')
 const PORT = process.env.PORT
+require('./config/mongoose')
 
 app.engine('hbs', engine({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
