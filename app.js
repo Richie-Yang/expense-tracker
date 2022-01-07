@@ -1,4 +1,5 @@
-const app = require('express')()
+const express = require('express')
+const app = express()
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -10,6 +11,7 @@ const PORT = process.env.PORT
 app.engine('hbs', engine({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
+app.use(express.static('public'))
 require('./routes')(app)
 
 

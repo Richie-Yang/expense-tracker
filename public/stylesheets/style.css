@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 5vh 15px;
+}
+
+#total-amount {
+  font-size: 4rem;
+}
+
+#record-table {
+  position: relative;
+}
+
+table.table-borderless {
+  position: relative;
+}
+
+table.table-borderless tbody tr td:first-child {
+  text-align: right;
+}
+
+.custom-delete-btn {
+  display: inline;
+  background-color: unset;
+  border: unset;
+  padding: unset;
+}
+
+@media (min-width: 768px) {
+  main {
+    margin: 0 auto;
+    max-width: 50%;
+  }
+
+  #total-amount {
+    font-size: 6rem;
+  }
+
+  table.table-borderless {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 35%;
+  }
+}
