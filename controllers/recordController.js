@@ -7,8 +7,10 @@ module.exports = {
     try {
       const categories = await Category.find().lean()
       const records = await Record.find().lean()
+      const totalAmount = records.map(record => record.amount)
+        .reduce((x, y) => x + y)
 
-      return res.render('index', { categories ,records })
+      return res.render('index', { categories , totalAmount, records })
     } catch (err) { next(err) }
   }
 }

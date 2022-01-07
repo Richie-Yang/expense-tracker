@@ -1,5 +1,4 @@
 <select class="form-select" aria-label="Default select example">
-  <option>選擇以下其中選項</option>
   <option value="全部">全部</option>
   {{#each categories}}
     <option value="{{this.name}}">{{this.name}}</option>
@@ -8,7 +7,7 @@
 
 <div class="d-flex justify-content-between mt-4">
   <h3>總金額:</h3>
-  <h1 id="total-amount">25260</h1>
+  <h1 id="total-amount">{{totalAmount}}</h1>
 </div>
 
 {{#if records}}
