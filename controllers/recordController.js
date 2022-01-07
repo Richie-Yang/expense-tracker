@@ -5,12 +5,20 @@ const Category = require('../models/category')
 module.exports = {
   getRecords: async(req, res, next) => {
     try {
-      const categories = await Category.find().lean()
-      const records = await Record.find().lean()
-      const totalAmount = records.map(record => record.amount)
-        .reduce((x, y) => x + y)
+      const categoryId = req.query.category
+      const sort = { date: 'desc' }
 
-      return res.render('index', { categories , totalAmount, records })
+      const categories = await Category.find().lean()
+      const records = categoryId === undefined || categoryId === 'all' ?
+        await Record.find().lean().sort(sort) :
+        await Record.find({ categoryId }).lean().sort(sort)
+
+      const totalAmount = records.length ? 
+        records.map(record => record.amount).reduce((x, y) => x + y) : 0
+
+      return res.render('index', { 
+        categories, categoryId, totalAmount, records 
+      })
     } catch (err) { next(err) }
   }
 }

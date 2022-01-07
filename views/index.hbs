@@ -1,9 +1,17 @@
-<select class="form-select" aria-label="Default select example">
-  <option value="全部">全部</option>
-  {{#each categories}}
-    <option value="{{this.name}}">{{this.name}}</option>
-  {{/each}}
-</select>
+<form action="/" method="GET">
+  <select id="sort-bar" class="form-select" aria-label="Default select example" name="category">
+    <option value="all">全部</option>
+    {{#each categories}}
+      {{#ifCond this._id ../categoryId }}
+      <option value="{{this._id}}" selected>{{this.name}}</option>
+      {{else}}
+      <option value="{{this._id}}">{{this.name}}</option>
+      {{/ifCond}}
+    {{/each}}
+  </select>
+
+  <button id="function-submit-button" class="d-none" type="submit"></button>
+</form>
 
 <div class="d-flex justify-content-between mt-4">
   <h3>總金額:</h3>
@@ -45,3 +53,4 @@
   <a href="/records/new" class="btn btn-primary w-75 mx-auto d-block">新增支出</a>
 </div>
 
+<script src="/javascripts/sort.js"></script>

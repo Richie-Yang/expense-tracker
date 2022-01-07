@@ -9,7 +9,11 @@ const { engine } = require('express-handlebars')
 const PORT = process.env.PORT
 require('./config/mongoose')
 
-app.engine('hbs', engine({ defaultLayout: 'main', extname: '.hbs' }))
+app.engine('hbs', engine({ 
+  defaultLayout: 'main', 
+  extname: '.hbs', 
+  helpers: require('./config/handlebars')
+}))
 app.set('view engine', 'hbs')
 
 app.use(express.static('public'))
