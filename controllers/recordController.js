@@ -3,7 +3,7 @@ const Category = require('../models/category')
 
 
 module.exports = {
-  getRecords: async(req, res, next) => {
+  getRecords: async (req, res, next) => {
     try {
       const categoryId = req.query.category
       const sort = { date: 'desc' }
@@ -32,7 +32,7 @@ module.exports = {
       .catch(err => next(err))
   },
 
-  postRecord: async(req, res, next) => {
+  postRecord: async (req, res, next) => {
     try {
       const { name, date, category, amount } = req.body
       const categories = await Category.find().lean()
@@ -78,7 +78,7 @@ module.exports = {
     } catch (err) { next(err) }
   },
 
-  editRecord: async(req, res, next) => {
+  editRecord: async (req, res, next) => {
     try {
       const { recordId } = req.params
 
@@ -151,5 +151,14 @@ module.exports = {
         })
 
     } catch (err) { next(err) }
+  },
+
+  deleteRecord: (req, res, next) => {
+    const { recordId } = req.params
+    
+    return Record.findById(recordId)
+      .then(record => record.remove())
+      .then(() => res.redirect('/'))
+      .catch(err => next(err))
   }
 }
