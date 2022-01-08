@@ -98,10 +98,58 @@ module.exports = {
 
 
       return res.render('new', {
-        categories, 
+        record, categories, 
         categoryId: record.categoryId, 
         name, date, amount 
       })
+    } catch (err) { next(err) }
+  },
+
+  putRecord: async (req, res, next) => {
+    try {
+      const { recordId } = req.params
+      const { name, date, category, amount } = req.body
+      const categories = await Category.find().lean()
+      let errors = ''
+
+      if (!name.trim() || !date || !category || !amount) {
+        errors += '所有欄位都是必填'
+      }
+
+      if (Number(amount) < 0) errors += '\n金額欄位不為負數'
+
+      if (errors.length) {
+        console.log(errors)
+        return res.render('new', {
+          errors, name, date, categories,
+          categoryId: category,
+          amount
+        })
+      }
+
+      return Category.findById(category)
+        .then(category => {
+          if (!category) {
+            errors += '\n類別欄位並不存在'
+            console.log(errors)
+            return res.render('new', {
+              errors, name, date, categories,
+              categoryId: category,
+              amount
+            })
+          }
+
+          return Record.findById(recordId)
+            .then(record => {
+              record.name = name
+              record.date = new Date(date + " GMT+00:00")
+              record.amount = Number(amount)
+              record.categoryId = category
+              record.save()
+            })
+            .then(() => res.redirect('/'))
+        })
+
     } catch (err) { next(err) }
   }
 }
