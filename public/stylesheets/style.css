@@ -21,6 +21,7 @@ main {
 
 table.table-borderless {
   position: relative;
+  width: 25%;
 }
 
 table.table-borderless tbody tr td:first-child {
@@ -47,7 +48,7 @@ table.table-borderless tbody tr td:first-child {
   table.table-borderless {
     position: absolute;
     top: 0;
-    left: 100%;
-    width: 35%;
+    left: 80%;
+    width: 60%;
   }
 }

@@ -20,23 +20,32 @@
 
 {{#if records}}
 <div id="record-table" class="d-flex d-md-block mt-4">
-  <table class="table table-striped table-hover">
+  <table class="table table-striped table-hover align-middle">
     <tbody>
       {{#each records}}
         <tr>
-          <td>icon</td>
-          <td>{{this.name}}</td>
+          <td><img src="{{this.icon}}" alt="icon"></td>
+          <td>
+            <div>{{this.name}}</div>
+            <div>{{this.date}}</div>
+          </td>
           <td>{{this.amount}}</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 
-  <table class="w-50 w-md-100 table table-borderless">
+  <table class="table table-borderless align-middle">
     <tbody>
       {{#each records}}
       <tr>
-        <td><a href="/records/{{this._id}}/edit" class="text-decoration-none">修改</a></td>
+        <td id="hidden-td" class="d-none d-md-block invisible">
+          <div>{{this.name}}</div>
+          <div>{{this.date}}</div>
+        </td>
+        <td>
+          <a href="/records/{{this._id}}/edit" class="text-decoration-none">修改</a>
+        </td>
         <td>
           <form action="/records/{{this._id}}?_method=DELETE" method="POST">
             <button type="submit" class="custom-delete-btn nav-link">刪除</button>

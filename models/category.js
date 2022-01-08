@@ -13,6 +13,7 @@ const defaultSetup = {
 }
 
 const categorySchema = new Schema({
+  icon: String,
   name: defaultSetup.stringType
 })
 
