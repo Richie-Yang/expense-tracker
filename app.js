@@ -1,4 +1,5 @@
 const express = require('express')
+const methodOverride = require('method-override')
 const app = express()
 
 if (process.env.NODE_ENV !== 'production') {
@@ -16,6 +17,8 @@ app.engine('hbs', engine({
   helpers: require('./config/handlebars')
 }))
 app.set('view engine', 'hbs')
+app.use(methodOverride('_method'))
+app.use(express.urlencoded({ extended: true }))
 
 app.use(express.static('public'))
 app.use(routes)

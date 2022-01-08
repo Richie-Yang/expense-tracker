@@ -1,4 +1,4 @@
-<form action="/records/new" method="POST">
+<form action="/records" method="POST">
   <div class="row mb-5">
     <p class="col-2">*必填欄位</p>
     <h4 class="col-10 text-center">請輸入你的支出</h4>
@@ -6,20 +6,20 @@
   <div class="row mb-5">
     <label for="name" class="col-sm-2 col-form-label">名稱*: </label>
     <div class="col-sm-10">
-      <input type="name" class="form-control" id="name" name="name"placeholder="輸入名稱" required>
+      <input type="name" class="form-control" id="name" name="name" placeholder="輸入名稱" value="{{name}}" required>
     </div>
   </div>
   <div class="row mb-5">
     <label for="date" class="col-sm-2 col-form-label">日期*: </label>
     <div class="col-sm-10">
-      <input type="date" class="form-control" id="date" name="date" required>
+      <input type="date" class="form-control" id="date" name="date" value="{{date}}" required>
     </div>
   </div>
   <div class="row mb-5">
     <label for="category" class="col-sm-2 col-form-label">類別*: </label>
     <div class="col-sm-10">
       <select class="form-select" aria-label="Default select example" name="category" required>
-        <option>請選擇以下其中選項</option>
+        <option value=''>請選擇以下其中選項</option>
         {{#each categories}}
           <option value="{{this._id}}">{{this.name}}</option>
         {{/each}}
@@ -29,7 +29,7 @@
   <div class="row mb-5">
     <label for="amount" class="col-sm-2 col-form-label">金額*: </label>
     <div class="col-sm-10">
-      <input type="number" class="form-control" id="amount" name="amount" min="0" placeholder="輸入數字" required>
+      <input type="number" class="form-control" id="amount" name="amount" min="0" placeholder="輸入數字" value="{{amount}}" required>
     </div>
   </div>
   <div class="row mb-5">

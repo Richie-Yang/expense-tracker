@@ -22,9 +22,52 @@ module.exports = {
     } catch (err) { next(err) }
   },
 
-  createRecord: (req, res) => {
+  createRecord: (req, res, next) => {
     return Category.find()
       .lean()
       .then(categories => res.render('new', { categories }))
+      .catch(err => next(err))
+  },
+
+  postRecord: async(req, res, next) => {
+    try {
+      const { name, date, category, amount } = req.body
+      const categories = await Category.find().lean()
+      let errors = ''
+
+      if (!name.trim() || !date || !category || !amount) {
+        errors += '所有欄位都是必填'
+      }
+
+      if (Number(amount) < 0) errors += '\n金額欄位不為負數'
+
+      if (errors.length) {
+        console.log(errors)
+        return res.render('new', {
+          errors, name, categories, amount
+        })
+      }
+
+      return Category.findById(category)
+        .then(category => {
+          if (!category) {
+            errors += '\n類別欄位並不存在'
+            console.log(errors)
+            return res.render('new', {
+              errors, name, categories, amount
+            })
+          }
+
+          return Record.create({
+            name,
+            date: new Date(date + " GMT+00:00"),
+            amount: Number(amount),
+            userId: "61d8473f79cc55019b5ee4c8",
+            categoryId: category
+          })
+            .then(() => res.redirect('/'))
+        })
+
+    } catch (err) { next(err) }
   }
 }
