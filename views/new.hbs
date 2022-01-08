@@ -1,7 +1,19 @@
-<form action="/records" method="POST">
+<form action="
+{{#if createRecord}}
+/records
+{{else}}
+/records/{{record._id}}
+{{/if}}" 
+method="POST">
   <div class="row mb-5">
     <p class="col-2">*必填欄位</p>
-    <h4 class="col-10 text-center">請輸入你的支出</h4>
+    <h4 class="col-10 text-center">
+      {{#if createRecord}}
+      請輸入你的支出
+      {{else}}
+      請修改你的支出
+      {{/if}}
+    </h4>
   </div>
   <div class="row mb-5">
     <label for="name" class="col-sm-2 col-form-label">名稱*: </label>
@@ -21,7 +33,11 @@
       <select class="form-select" aria-label="Default select example" name="category" required>
         <option value=''>請選擇以下其中選項</option>
         {{#each categories}}
+          {{#ifCond this._id ../categoryId }}
+          <option value="{{this._id}}" selected>{{this.name}}</option>
+          {{else}}
           <option value="{{this._id}}">{{this.name}}</option>
+          {{/ifCond}}
         {{/each}}
       </select>
     </div>
@@ -34,6 +50,12 @@
   </div>
   <div class="row mb-5">
     <div class="col-sm-2"></div>
-    <button class="col-sm-10 btn btn-primary " type="submit">新增支出</button>
+    <button class="col-sm-10 btn btn-primary " type="submit">
+      {{#if createRecord}}
+      新增支出
+      {{else}}
+      送出
+      {{/if}}
+    </button>
   </div>
 </form>

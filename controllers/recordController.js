@@ -25,7 +25,10 @@ module.exports = {
   createRecord: (req, res, next) => {
     return Category.find()
       .lean()
-      .then(categories => res.render('new', { categories }))
+      .then(categories => res.render('new', {
+        createRecord: true,
+        categories 
+      }))
       .catch(err => next(err))
   },
 
@@ -44,7 +47,9 @@ module.exports = {
       if (errors.length) {
         console.log(errors)
         return res.render('new', {
-          errors, name, categories, amount
+          errors, name, date, categories, 
+          categoryId: category,
+          amount
         })
       }
 
@@ -54,7 +59,9 @@ module.exports = {
             errors += '\n類別欄位並不存在'
             console.log(errors)
             return res.render('new', {
-              errors, name, categories, amount
+              errors, name, date, categories, 
+              categoryId: category,
+              amount
             })
           }
 
@@ -68,6 +75,33 @@ module.exports = {
             .then(() => res.redirect('/'))
         })
 
+    } catch (err) { next(err) }
+  },
+
+  editRecord: async(req, res, next) => {
+    try {
+      const { recordId } = req.params
+
+      const categories = await Category.find().lean()
+      const record = await Record.findById(recordId).lean()
+      const { name, amount } = record
+      let { date } = record
+
+      // convert date data to make it compatible for front-end
+      let month = (new Date(date).getMonth() + 1).toString()
+      month = month.length < 2 ? `0${month}` : month
+
+      let day = new Date(date).getDate().toString()
+      day = day.length < 2 ? `0${day}` : day
+
+      date = `${new Date(date).getFullYear()}-${month}-${day}`
+
+
+      return res.render('new', {
+        categories, 
+        categoryId: record.categoryId, 
+        name, date, amount 
+      })
     } catch (err) { next(err) }
   }
 }
