@@ -20,5 +20,11 @@ module.exports = {
         categories, categoryId, totalAmount, records 
       })
     } catch (err) { next(err) }
+  },
+
+  createRecord: (req, res) => {
+    return Category.find()
+      .lean()
+      .then(categories => res.render('new', { categories }))
   }
 }

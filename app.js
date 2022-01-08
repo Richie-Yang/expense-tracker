@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+const routes = require('./routes')
 const { engine } = require('express-handlebars')
 const PORT = process.env.PORT
 require('./config/mongoose')
@@ -17,7 +18,7 @@ app.engine('hbs', engine({
 app.set('view engine', 'hbs')
 
 app.use(express.static('public'))
-require('./routes')(app)
+app.use(routes)
 
 
 app.listen(PORT, () => {

@@ -1,6 +1,10 @@
+const express = require('express')
+const router = express.Router()
 const recordController = require('../controllers/recordController')
 
 
-module.exports = app => {
-  app.use('/', recordController.getRecords)
-}
+router.use('/records/new', recordController.createRecord)
+router.use('/', recordController.getRecords)
+
+
+module.exports = router
