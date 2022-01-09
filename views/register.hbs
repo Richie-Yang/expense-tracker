@@ -1,0 +1,30 @@
+<div class="card card-body shadow">
+  <h1 class="text-center mt-3">註冊會員</h1>
+  <form action="/users/register" method="POST">
+
+    <div class="my-3">
+      <label for="name" class="form-label">名字</label>
+      <input type="text" class="form-control" id="name" placeholder="輸入名字 (選項欄位)" name="name" value="{{name}}">
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">電子信箱</label>
+      <input type="email" class="form-control" id="email" placeholder="輸入信箱地址 (必要欄位)" name="email" value="{{email}}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">密碼</label>
+      <input type="password" class="form-control" id="password" placeholder="輸入密碼 (必要欄位)" name="password" value="{{password}}" required>
+    </div>
+
+    <div class="mb-5">
+      <label for="confirm-password" class="form-label">確認密碼</label>
+      <input type="password" class="form-control" id="confirm-password" placeholder="確認密碼 (必要欄位)" name="confirmPassword" value="{{confirmPassword}}" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block w-100">註冊</button>
+  </form>
+  <p class="lead mt-4">
+    已有帳號? <a href="/users/login">登入</a>
+  </p>
+</div>
