@@ -9,12 +9,14 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
     integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
   <link rel="stylesheet" href="/stylesheets/style.css">
-  <title>家庭記帳本</title>
+  <title>
+  {{#if isAuthenticated}}{{user.name}}的{{else}}家庭{{/if}}記帳本
+  </title>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">家庭記帳本</a>
+      <a class="navbar-brand" href="/">{{#if isAuthenticated}}{{user.name}}的{{else}}家庭{{/if}}記帳本</a>
       <ul class="nav">
         {{#if isAuthenticated}}
         <li class="nav-item">
