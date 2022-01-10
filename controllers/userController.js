@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
+const user = require('../models/user')
 
 
 module.exports = {
@@ -54,5 +55,10 @@ module.exports = {
 
   login: (req, res) => {
     res.redirect('/')
+  },
+
+  logout: (req, res) => {
+    req.logout()
+    return res.redirect('/users/login')
   }
 }

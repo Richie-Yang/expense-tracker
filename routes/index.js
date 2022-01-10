@@ -11,10 +11,13 @@ router.post('/records', authenticator, recordController.postRecord)
 router.get('/records/:recordId/edit', authenticator, recordController.editRecord)
 router.put('/records/:recordId', authenticator, recordController.putRecord)
 router.delete('/records/:recordId', authenticator, recordController.deleteRecord)
+
 router.get('/users/register', userController.registerPage)
 router.post('/users/register', userController.register)
 router.get('/users/login', userController.loginPage)
 router.post('/users/login', passport.authenticate('local', { failureRedirect: '/users/login' }),userController.login)
+router.get('/users/logout', userController.logout)
+
 router.get('/', authenticator, recordController.getRecords)
 
 
