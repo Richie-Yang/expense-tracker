@@ -18,6 +18,8 @@ router.get('/users/login', userController.loginPage)
 router.post('/users/login', passport.authenticate('local', { failureRedirect: '/users/login' }), userController.login)
 router.get('/users/logout', userController.logout)
 
+router.get('/auth/local/callback', userController.localCallback)
+
 router.get('/', authenticator, recordController.getRecords)
 
 

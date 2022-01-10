@@ -16,6 +16,12 @@ const userSchema = new Schema({
   name: defaultSetup.stringType,
   email: defaultSetup.stringType,
   password: defaultSetup.stringType,
+  validationCode: String,
+  validationTime: Date,
+  isActive: {
+    type: Boolean,
+    default: false
+  },
   updatedAt: {
     ...defaultSetup.dateType,
     default: Date.now

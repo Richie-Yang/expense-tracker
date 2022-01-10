@@ -55,7 +55,9 @@ db.once('open', async() => {
         const { name, email, password } = SEED_USERS[i]
         return bcrypt.genSalt(10)
           .then(salt => bcrypt.hash(password, salt))
-          .then(hash => User.create({ name, email, password: hash }))
+          .then(hash => User.create({ 
+            name, email, password: hash, isActive: true 
+          }))
       }),
       ...Array.from(Array(seedCategoriesLength), (_, i) => {
         const { name } = SEED_CATEGORIES[i]
