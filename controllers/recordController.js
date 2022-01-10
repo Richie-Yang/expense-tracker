@@ -6,6 +6,7 @@ const Category = require('../models/category')
 module.exports = {
   getRecords: async (req, res, next) => {
     try {
+      const userId = req.user._id
       const categoryId = req.query.category
       const sort = { _id: 'desc', date: 'desc' }
 
@@ -16,8 +17,8 @@ module.exports = {
       }))
 
       const records = categoryId === undefined || categoryId === 'all' ?
-        await Record.find().lean().sort(sort) :
-        await Record.find({ categoryId }).lean().sort(sort)
+        await Record.find({ userId }).lean().sort(sort) :
+        await Record.find({ userId, categoryId }).lean().sort(sort)
 
       records.forEach((item, index, array) => {
         categoryArray.forEach(categoryItem => {
@@ -51,6 +52,7 @@ module.exports = {
 
   postRecord: async (req, res, next) => {
     try {
+      const userId = req.user._id
       const { name, date, category, amount } = req.body
       const categories = await Category.find().lean()
       let errors = ''
@@ -86,7 +88,7 @@ module.exports = {
             name,
             date: new Date(date + " GMT+00:00"),
             amount: Number(amount),
-            userId: "61d8473f79cc55019b5ee4c8",
+            userId,
             categoryId: category
           })
             .then(() => res.redirect('/'))
@@ -97,10 +99,11 @@ module.exports = {
 
   editRecord: async (req, res, next) => {
     try {
+      const userId = req.user._id
       const { recordId } = req.params
 
       const categories = await Category.find().lean()
-      const record = await Record.findById(recordId).lean()
+      const record = await Record.findOne({ userId, recordId }).lean()
       const { name, amount } = record
       let { date } = record
 
@@ -124,6 +127,7 @@ module.exports = {
 
   putRecord: async (req, res, next) => {
     try {
+      const userId = req.user._id
       const { recordId } = req.params
       const { name, date, category, amount } = req.body
       const categories = await Category.find().lean()
@@ -156,7 +160,7 @@ module.exports = {
             })
           }
 
-          return Record.findById(recordId)
+          return Record.findOne({ userId, recordId })
             .then(record => {
               record.name = name
               record.date = new Date(date + " GMT+00:00")
@@ -171,9 +175,10 @@ module.exports = {
   },
 
   deleteRecord: (req, res, next) => {
+    const userId = req.user._id
     const { recordId } = req.params
     
-    return Record.findById(recordId)
+    return Record.findOne({ userId, recordId })
       .then(record => record.remove())
       .then(() => res.redirect('/'))
       .catch(err => next(err))
