@@ -1,0 +1,20 @@
+<div class="card card-body shadow">
+  <h1 class="text-center mt-3">會員登入</h1>
+  <form action="/users/login" method="POST">
+
+    <div class="mb-3">
+      <label for="email" class="form-label">電子信箱</label>
+      <input type="email" class="form-control" id="email" placeholder="輸入信箱地址" name="email">
+    </div>
+
+    <div class="mb-5">
+      <label for="password" class="form-label">密碼</label>
+      <input type="password" class="form-control" id="password" placeholder="輸入密碼" name="password">
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block w-100">登入</button>
+  </form>
+  <p class="lead mt-4">
+    沒有帳號? <a href="/users/register">註冊</a>
+  </p>
+</div>

@@ -46,5 +46,13 @@ module.exports = {
           .then(() => res.redirect('/users/login'))
       })
     .catch(err => next(err))
+  },
+
+  loginPage: (req, res) => {
+    res.render('login')
+  },
+
+  login: (req, res) => {
+    res.redirect('/')
   }
 }

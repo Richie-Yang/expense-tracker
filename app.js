@@ -1,11 +1,13 @@
 const express = require('express')
 const methodOverride = require('method-override')
+const session = require('express-session')
 const app = express()
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+const usePassport = require('./config/passport')
 const routes = require('./routes')
 const { engine } = require('express-handlebars')
 const PORT = process.env.PORT
@@ -17,10 +19,21 @@ app.engine('hbs', engine({
   helpers: require('./config/handlebars')
 }))
 app.set('view engine', 'hbs')
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true
+}))
+
+usePassport(app)
 app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }))
-
 app.use(express.static('public'))
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
 app.use(routes)
 
 
