@@ -1,15 +1,18 @@
 <div class="card card-body shadow">
   <h1 class="text-center mt-3">會員登入</h1>
+
+  {{> message}}
+
   <form action="/users/login" method="POST">
 
     <div class="mb-3">
       <label for="email" class="form-label">電子信箱</label>
-      <input type="email" class="form-control" id="email" placeholder="輸入信箱地址" name="email">
+      <input type="email" class="form-control" id="email" placeholder="輸入信箱地址" name="email" required>
     </div>
 
     <div class="mb-5">
       <label for="password" class="form-label">密碼</label>
-      <input type="password" class="form-control" id="password" placeholder="輸入密碼" name="password">
+      <input type="password" class="form-control" id="password" placeholder="輸入密碼" name="password" required>
     </div>
 
     <button type="submit" class="btn btn-primary btn-block w-100">登入</button>

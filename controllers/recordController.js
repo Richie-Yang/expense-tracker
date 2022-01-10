@@ -55,17 +55,19 @@ module.exports = {
       const userId = req.user._id
       const { name, date, category, amount } = req.body
       const categories = await Category.find().lean()
-      let errors = ''
+      const errors = []
 
       if (!name.trim() || !date || !category || !amount) {
-        errors += '所有欄位都是必填'
+        errors.push({ message: '所有欄位都是必填' })
       }
 
-      if (Number(amount) < 0) errors += '\n金額欄位不為負數'
+      if (Number(amount) < 0) {
+        errors.push({ message: '金額欄位不為負數' })
+      }
 
       if (errors.length) {
-        console.log(errors)
         return res.render('new', {
+          createRecord: true,
           errors, name, date, categories, 
           categoryId: category,
           amount
@@ -75,9 +77,9 @@ module.exports = {
       return Category.findById(category)
         .then(category => {
           if (!category) {
-            errors += '\n類別欄位並不存在'
-            console.log(errors)
+            errors.push({ message: '類別欄位並不存在' })
             return res.render('new', {
+              createRecord: true,
               errors, name, date, categories, 
               categoryId: category,
               amount
@@ -91,7 +93,10 @@ module.exports = {
             userId,
             categoryId: category
           })
-            .then(() => res.redirect('/'))
+            .then(() => {
+              req.flash('success_msg', '紀錄已經成功建立')
+              res.redirect('/')
+            })
         })
 
     } catch (err) { next(err) }
@@ -100,10 +105,10 @@ module.exports = {
   editRecord: async (req, res, next) => {
     try {
       const userId = req.user._id
-      const { recordId } = req.params
+      const _id = req.params.recordId
 
       const categories = await Category.find().lean()
-      const record = await Record.findOne({ userId, recordId }).lean()
+      const record = await Record.findOne({ _id, userId }).lean()
       const { name, amount } = record
       let { date } = record
 
@@ -128,16 +133,18 @@ module.exports = {
   putRecord: async (req, res, next) => {
     try {
       const userId = req.user._id
-      const { recordId } = req.params
+      const _id = req.params.recordId
       const { name, date, category, amount } = req.body
       const categories = await Category.find().lean()
-      let errors = ''
+      const errors = []
 
       if (!name.trim() || !date || !category || !amount) {
-        errors += '所有欄位都是必填'
+        errors.push({ message: '所有欄位都是必填' })
       }
 
-      if (Number(amount) < 0) errors += '\n金額欄位不為負數'
+      if (Number(amount) < 0) {
+        errors.push({ message: '金額欄位不為負數' })
+      }
 
       if (errors.length) {
         console.log(errors)
@@ -151,8 +158,7 @@ module.exports = {
       return Category.findById(category)
         .then(category => {
           if (!category) {
-            errors += '\n類別欄位並不存在'
-            console.log(errors)
+            errors.push({ message: '類別欄位並不存在' })
             return res.render('new', {
               errors, name, date, categories,
               categoryId: category,
@@ -160,7 +166,7 @@ module.exports = {
             })
           }
 
-          return Record.findOne({ userId, recordId })
+          return Record.findOne({ _id, userId })
             .then(record => {
               record.name = name
               record.date = new Date(date + " GMT+00:00")
@@ -168,7 +174,10 @@ module.exports = {
               record.categoryId = category
               record.save()
             })
-            .then(() => res.redirect('/'))
+            .then(() => {
+              req.flash('success_msg', '紀錄已經成功修改')
+              res.redirect('/')
+            })
         })
 
     } catch (err) { next(err) }
@@ -176,11 +185,14 @@ module.exports = {
 
   deleteRecord: (req, res, next) => {
     const userId = req.user._id
-    const { recordId } = req.params
+    const _id = req.params.recordId
     
-    return Record.findOne({ userId, recordId })
+    return Record.findOne({ _id, userId })
       .then(record => record.remove())
-      .then(() => res.redirect('/'))
+      .then(() => {
+        req.flash('success_msg', '紀錄已經成功刪除')
+        res.redirect('/')
+      })
       .catch(err => next(err))
   }
 }

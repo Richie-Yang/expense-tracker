@@ -8,7 +8,8 @@ module.exports = {
   },
 
   register: (req, res, next) => {
-    const { name, email, password, confirmPassword } = req.body
+    const { email, password, confirmPassword } = req.body
+    let { name } = req.body
     const errors = []
 
     if (!email || !password || !confirmPassword) {
@@ -20,7 +21,6 @@ module.exports = {
     }
 
     if (errors.length) {
-      console.log(errors)
       return res.render('register', {
         errors, name, email
       })
@@ -30,7 +30,6 @@ module.exports = {
       .then(user => {
         if (user) {
           errors.push({ message: '電子信箱已被使用' })
-          console.log(errors)
           return res.render('register', {
             errors, name, email
           })
@@ -39,6 +38,8 @@ module.exports = {
         return bcrypt.genSalt(10)
           .then(salt => bcrypt.hash(password, salt))
           .then(hash => {
+            if (!name) name = email.split('@')[0]
+
             return User.create({
               name, email, password: hash
             })
@@ -53,10 +54,13 @@ module.exports = {
   },
 
   login: (req, res) => {
+    const { name } = req.user
+    req.flash('success_msg', `歡迎回來，${name}`)
     res.redirect('/')
   },
 
   logout: (req, res) => {
+    req.flash('success_msg', '您已成功登出')
     req.logout()
     return res.redirect('/users/login')
   }
