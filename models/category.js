@@ -14,7 +14,15 @@ const defaultSetup = {
 
 const categorySchema = new Schema({
   icon: String,
-  name: defaultSetup.stringType
+  name: defaultSetup.stringType,
+  updatedAt: {
+    ...defaultSetup.dateType,
+    default: Date.now
+  },
+  createdAt: {
+    ...defaultSetup.dateType,
+    default: Date.now
+  }
 })
 
 

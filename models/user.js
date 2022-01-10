@@ -16,6 +16,10 @@ const userSchema = new Schema({
   name: defaultSetup.stringType,
   email: defaultSetup.stringType,
   password: defaultSetup.stringType,
+  updatedAt: {
+    ...defaultSetup.dateType,
+    default: Date.now
+  },
   createdAt: {
     ...defaultSetup.dateType,
     default: Date.now
