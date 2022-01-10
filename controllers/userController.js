@@ -129,7 +129,7 @@ module.exports = {
 
       const user = await User.findById(userId)
         .then(user => {
-          const validationSalt = bcrypt.genSaltSync(10)
+          const validationSalt = bcrypt.genSaltSync(3)
           const validationHash = bcrypt.hashSync(
             user._id.toString(), validationSalt
           )
@@ -141,7 +141,6 @@ module.exports = {
         })
 
       var mailOptions = {
-        from: process.env.LOCAL_EMAIL_SENDER,
         to: user.email,
         subject: `家庭記帳本 帳號認證`,
         text: `請點擊以下的連結:\n${process.env.LOCAL_CALLBACK_URL}?activate=${user.validationCode}`
