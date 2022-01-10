@@ -26,11 +26,6 @@ module.exports = app => {
                 return done(null, false)
               }
 
-              if (!user.isActive) {
-                req.flash('warning_msg', '使用者尚未被認證')
-                return done(null, false)
-              }
-
               return done(null, user)
             })
         })

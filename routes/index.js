@@ -19,6 +19,7 @@ router.post('/users/login', passport.authenticate('local', { failureRedirect: '/
 router.get('/users/logout', userController.logout)
 
 router.get('/auth/local/callback', userController.localCallback)
+router.get('/auth/local/:userId/verify', userController.verify)
 
 router.get('/', authenticator, recordController.getRecords)
 
