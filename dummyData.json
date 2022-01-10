@@ -2,11 +2,15 @@
   "SEED_USERS": [
     {
       "id": 1,
-      "name": "廣志"
+      "name": "廣志",
+      "email": "user1@example.com",
+      "password": "12345678"
     },
     {
       "id": 2,
-      "name": "小新"
+      "name": "小新",
+      "email": "user2@example.com",
+      "password": "12345678"
     }
   ],
 

@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -50,8 +52,10 @@ db.once('open', async() => {
 
     const mergedSeedData = await Promise.all([
       ...Array.from(Array(seedUsersLength), (_, i) => {
-        const { name } = SEED_USERS[i]
-        return User.create({ name })
+        const { name, email, password } = SEED_USERS[i]
+        return bcrypt.genSalt(10)
+          .then(salt => bcrypt.hash(password, salt))
+          .then(hash => User.create({ name, email, password: hash }))
       }),
       ...Array.from(Array(seedCategoriesLength), (_, i) => {
         const { name } = SEED_CATEGORIES[i]

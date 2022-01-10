@@ -10,6 +10,7 @@ router.get('/records/:recordId/edit', recordController.editRecord)
 router.put('/records/:recordId', recordController.putRecord)
 router.delete('/records/:recordId', recordController.deleteRecord)
 router.get('/users/register', userController.registerPage)
+router.post('/users/register', userController.register)
 router.get('/', recordController.getRecords)
 
 

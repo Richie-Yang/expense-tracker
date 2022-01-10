@@ -14,6 +14,8 @@ const defaultSetup = {
 
 const userSchema = new Schema({
   name: defaultSetup.stringType,
+  email: defaultSetup.stringType,
+  password: defaultSetup.stringType,
   createdAt: {
     ...defaultSetup.dateType,
     default: Date.now
