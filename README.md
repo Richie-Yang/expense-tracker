@@ -3,7 +3,7 @@
 Expense Tracker, the web service which provides really simple financial records management. This project is built upon Express.js with several well known modules, such as Passport, nodemailer, and so on.
 
 
-## Screenshots (updated at 01/06/2022)
+## Screenshots
 ### Index view
 ![Index Page](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-1-index.png)
 ### Login view
