@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const usePassport = require('./config/passport')
 const routes = require('./routes')
+const { serverError } = require('./middleware/errorHandler')
 const { engine } = require('express-handlebars')
 const PORT = process.env.PORT
 require('./config/mongoose')
@@ -40,6 +41,10 @@ app.use((req, res, next) => {
   next()
 })
 app.use(routes)
+app.use((err, req, res, next) => {
+  console.log(err.stack)
+  return serverError(res)
+})
 
 
 app.listen(PORT, () => {

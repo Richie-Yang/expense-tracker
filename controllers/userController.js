@@ -51,6 +51,7 @@ module.exports = {
               })
           })
       })
+      .catch(err => next(error))
   },
 
   loginPage: (req, res) => {
