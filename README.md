@@ -3,6 +3,13 @@
 Expense Tracker, the web service which provides really simple financial records management. This project is built upon Express.js with several well known modules, such as Passport, nodemailer, and so on.
 
 
+## Screenshots (updated at 01/06/2022)
+### Index view
+![Index Page](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-1-index.png)
+### Login view
+![Login Page](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-2-login.png)
+
+
 ## Features
 1. User can register and use their account to login.
 2. User can sort all records based on fixed categories.
@@ -38,7 +45,13 @@ cp .env.example .env
 ```
 5. Fill out valid string referring to .env.example
 
-(In order to have email verification work properly, you must provide valid MAIL_USER and MAIL_PASSWORD as SMTP host. If you decide to use Google as email service provider, please also make sure your google account can be accessed by less secure APP, more detail can be learnt down below [here](https://support.google.com/accounts/answer/6010255?authuser=1&p=less-secure-apps&hl=en&authuser=1&visit_id=637774791101502056-4293814723&rd=1))
+6. Make sure SMTP email service is working properly
+
+#### In order to have email verification work properly, you must provide valid SMTP credentials as SMTP host. If you decide to use Google as email service provider, please login to gmail account and enable 'less secure APP access' and '2 step authentication', then finallly enable APP password, that APP password will be used as SMTP_USER_PASSWORD in .env. More detail can be checked below:
+
+[How to make less secure APP access Gmail service](https://support.google.com/accounts/answer/6010255?authuser=1&p=less-secure-apps&hl=en&authuser=1&visit_id=637774791101502056-4293814723&rd=1)
+
+[How to sign into Gmail service with APP password](https://support.google.com/accounts/answer/185833?hl=en)
 
 
 ## Execution
@@ -81,6 +94,15 @@ password: 12345678
 
 ## All Branches
 * 2022/1/11 core-dev
+
+
+## Other Screenshots
+### Edit view
+![Edit Page](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-3-edit.png)
+### Verify view (Email Sent)
+![Verify Email](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-4-verify-sent-r1.png)
+### Verify view (Failure)
+![Verify Email](https://github.com/Richie-Yang/expense-tracker/blob/main/public/image/core-dev-5-verify-fail-r1.png)
 
 
 ## Contributor
