@@ -5,13 +5,13 @@ const User = require('../models/user')
 
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: process.env.SMTP_HOST,
   port: 587,
   secure: false,
   requireTLS: true,
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASSWORD,
+    user: process.env.SMTP_MAIL_USER,
+    pass: process.env.SMTP_MAIL_PASSWORD,
   },
 })
 
