@@ -38,13 +38,13 @@ cp .env.example .env
 ```
 5. Fill out valid string referring to .env.example
 
-`(Because this web service always verify new registered user with verification email. So you must provide valid MAIL_USER and MAIL_PASSWORD as SMTP host)`
+(In order to have email verification work properly, you must provide valid MAIL_USER and MAIL_PASSWORD as SMTP host. If you decide to use Google as email service provider, please also make sure your google account can be accessed by less secure APP, more detail can be learnt down below [here](https://support.google.com/accounts/answer/6010255?authuser=1&p=less-secure-apps&hl=en&authuser=1&visit_id=637774791101502056-4293814723&rd=1))
 
 
 ## Execution
 1. Run below script to add seed data. 
 
-`(Every time you run it, the previous seed data will be overwritten)`
+(Every time you run it, the previous seed data will be overwritten)
 ```
 npm run seed
 ```
