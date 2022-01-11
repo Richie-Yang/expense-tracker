@@ -3,7 +3,7 @@ const router = express.Router()
 const recordController = require('../controllers/recordController')
 const userController = require('../controllers/userController')
 const passport = require('passport')
-const { authenticator } = require('../middleware/auth')
+const { authenticator, authenticatedCheck } = require('../middleware/auth')
 
 
 router.get('/records/new', authenticator, recordController.createRecord)
@@ -18,8 +18,9 @@ router.get('/users/login', userController.loginPage)
 router.post('/users/login', passport.authenticate('local', { failureRedirect: '/users/login' }), userController.login)
 router.get('/users/logout', userController.logout)
 
-router.get('/auth/local/callback', userController.localCallback)
-router.get('/auth/local/:userId/verify', userController.verify)
+router.get('/auth/local/callback', authenticatedCheck, userController.localCallback)
+router.get('/auth/local/page', authenticatedCheck, userController.verifyPage)
+router.get('/auth/local/verify', authenticatedCheck, userController.verify)
 
 router.get('/', authenticator, recordController.getRecords)
 

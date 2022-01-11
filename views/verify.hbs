@@ -1,14 +1,16 @@
 <div class="card card-body shadow">
   <h1 class="text-center mt-3">信箱認證</h1>
 
+  {{> message}}
+  
   <div class="mt-4 text-center">
-    <h2>{{status}}</h2>
-    <h4>{{message}}</h4>
+    <h2>尚未認證:</h2>
+    <h4>在使用本網頁服務之前，請先認證您的電子信箱</h4>
   </div>
 
   <h6 class="mt-5 text-danger"><strong>注意: </strong>認證信件中的啟動連結有效期限為5分鐘，當您按下發送認證信件時，請盡速前往信箱確認是否收到認證信件。</h6>
 
   <p class="lead mt-4">
-    發送認證信件? <a href="/auth/local/{{user._id}}/verify">發送</a>
+    發送認證信件? <a href="/auth/local/verify">發送</a>
   </p>
 </div>

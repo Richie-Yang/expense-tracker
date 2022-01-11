@@ -103,29 +103,28 @@ module.exports = {
       .then(user => {
         
         if (user) {
-          const userObj = { _id: user._id, isActive: user.isActive }
-
+          const userObj = { isActive: user.isActive }
           if (!userObj.isActive) {
-            return res.render('verify', {
-              user: userObj,
-              status: '認證失敗:',
-              message: '認證連結已經過期，請再重新發送認證信件'
-            })
+            req.flash('alert_msg', '認證連結已經過期，請再重新發送認證信件')
+            return res.redirect('/auth/local/page')
           }
 
           req.flash('success_msg', '電子信箱已經成功認證，請再重新登入')
         } else {
           req.flash('warning_msg', '連結失效，請再重新註冊帳號')
         }
-
         return res.redirect(`/users/login`)
       })
       .catch(err => next(err))
   },
 
+  verifyPage: (req, res) => {
+    res.render('verify')
+  },
+
   verify: async(req, res, next) => {
     try {
-      const { userId } = req.params
+      const userId = req.user._id.toString()
 
       const user = await User.findById(userId)
         .then(user => {
@@ -153,13 +152,8 @@ module.exports = {
           console.log('Email sent: ' + info.response)
         }
 
-        const userObj = { _id: user._id }
-
-        return res.render('verify', {
-          user: userObj,
-          status: '尚未認證:',
-          message: '認證信件已經發送，請到註冊信箱確認是否收到'
-        })
+        req.flash('success_msg', '認證信件已經發送，請到註冊信箱確認是否收到')
+        return res.redirect('/auth/local/page')
       })
     } catch (err) { next(err) }
   }
