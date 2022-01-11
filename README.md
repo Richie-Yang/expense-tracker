@@ -3,13 +3,6 @@
 Expense Tracker, the web service which provides really simple financial records management. This project is built upon Express.js with several well known modules, such as Passport, nodemailer, and so on.
 
 
-## Screenshots
-### login view
-![Login Page]()
-### index view
-![Index Page]()
-
-
 ## Features
 1. User can register and use their account to login.
 2. User can sort all records based on fixed categories.
@@ -18,7 +11,8 @@ Expense Tracker, the web service which provides really simple financial records 
 
 ## Prerequisites
 1. Node.js (v14.16.0 is recommended)
-3. GitBash or CMder (for Windows) / terminal (for MacOS)
+2. GitBash or CMder (for Windows) / terminal (for MacOS)
+3. Email Account (Gmail is recommended as it's tested)
 
 
 ## Installation
@@ -44,10 +38,13 @@ cp .env.example .env
 ```
 5. Fill out valid string referring to .env.example
 
+`(Because this web service always verify new registered user with verification email. So you must provide valid MAIL_USER and MAIL_PASSWORD as SMTP host)`
+
 
 ## Execution
 1. Run below script to add seed data. 
-(Every time you run it, the previous seed data will be overwritten)
+
+`(Every time you run it, the previous seed data will be overwritten)`
 ```
 npm run seed
 ```
@@ -84,13 +81,6 @@ password: 12345678
 
 ## All Branches
 * 2022/1/11 core-dev
-
-
-## Other Screenshots
-### edit view
-![Edit Page]()
-### error view
-![Error Page]()
 
 
 ## Contributor
