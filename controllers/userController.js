@@ -1,19 +1,7 @@
 const bcrypt = require('bcryptjs')
-const nodemailer = require('nodemailer')
 const moment = require('moment')
 const User = require('../models/user')
-
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.SMTP_MAIL_USER,
-    pass: process.env.SMTP_MAIL_PASSWORD,
-  },
-})
+const transporter = require('../config/nodemailer')
 
 
 module.exports = {
@@ -139,7 +127,7 @@ module.exports = {
           return user.save()
         })
 
-      var mailOptions = {
+      const mailOptions = {
         to: user.email,
         subject: `家庭記帳本 帳號認證`,
         text: `請點擊以下的連結:\n${process.env.LOCAL_CALLBACK_URL}?activate=${user.validationCode}`
