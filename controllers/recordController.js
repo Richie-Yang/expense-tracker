@@ -10,16 +10,21 @@ module.exports = {
       const categoryId = req.query.category
       const sort = { _id: 'desc', date: 'desc' }
 
+      // find all categories and rearrange as new array
       const categories = await Category.find().lean()
       const categoryArray = categories.map(item => ({
         id: item._id,
         icon: item.icon
       }))
 
+      // if categoryId is not selected or is selected as 'all'
+      // just simply extract all record data from database
+      // otherwise, extract data based on selected category
       const records = categoryId === undefined || categoryId === 'all' ?
         await Record.find({ userId }).lean().sort(sort) :
         await Record.find({ userId, categoryId }).lean().sort(sort)
 
+      // reArrange records and insert both icon and date data
       records.forEach((item, index, array) => {
         categoryArray.forEach(categoryItem => {
           if (categoryItem.id.toString() === item.categoryId.toString()) {
@@ -29,7 +34,7 @@ module.exports = {
         array[index].date = moment(item.date).format('YYYY/MM/DD')
       })
 
-
+      // calculate totalAmount
       const totalAmount = records.length ? 
         records.map(record => record.amount).reduce((x, y) => x + y) : 0
       
@@ -57,6 +62,7 @@ module.exports = {
       const categories = await Category.find().lean()
       const errors = []
 
+      // form input pre-check
       if (!name.trim() || !date || !category || !amount) {
         errors.push({ message: '所有欄位都是必填' })
       }
@@ -74,6 +80,9 @@ module.exports = {
         })
       }
 
+      // check if category exists or not
+      // if exists, we proceed to create record
+      // if not, we remind user the error
       return Category.findById(category)
         .then(category => {
           if (!category) {
@@ -119,6 +128,7 @@ module.exports = {
       let day = new Date(date).getDate().toString()
       day = day.length < 2 ? `0${day}` : day
 
+      // combine month, day, and year as one line string
       date = `${new Date(date).getFullYear()}-${month}-${day}`
 
 
@@ -138,6 +148,7 @@ module.exports = {
       const categories = await Category.find().lean()
       const errors = []
 
+      // form input pre-check
       if (!name.trim() || !date || !category || !amount) {
         errors.push({ message: '所有欄位都是必填' })
       }
@@ -155,6 +166,9 @@ module.exports = {
         })
       }
 
+      // check if category exists or not
+      // if exists, we proceed to update record
+      // if not, we remind user the error
       return Category.findById(category)
         .then(category => {
           if (!category) {
