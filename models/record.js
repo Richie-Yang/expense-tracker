@@ -1,24 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
+const defaultSetup = require('./defaultSetup')
 
-const defaultSetup = {
-  stringType: {
-    type: String,
-    required: true
-  },
-  numberType: {
-    type: Number,
-    required: true
-  },
-  dateType: {
-    type: Date,
-    required: true,
-  },
-  refType: {
-    type: Schema.Types.ObjectId,
-    required: true
-  }
-}
 
 const recordSchema = new Schema({
   name: defaultSetup.stringType,
