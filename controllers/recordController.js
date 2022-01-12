@@ -81,32 +81,30 @@ module.exports = {
       }
 
       // check if category exists or not
-      // if exists, we proceed to create record
       // if not, we remind user the error
-      return Category.findById(category)
-        .then(category => {
-          if (!category) {
-            errors.push({ message: '類別欄位並不存在' })
-            return res.render('new', {
-              createRecord: true,
-              errors, name, date, categories, 
-              categoryId: category,
-              amount
-            })
-          }
-
-          return Record.create({
-            name,
-            date: new Date(date + " GMT+00:00"),
-            amount: Number(amount),
-            userId,
-            categoryId: category
-          })
-            .then(() => {
-              req.flash('success_msg', '紀錄已經成功建立')
-              res.redirect('/')
-            })
+      const categoryIdArray = categories.map(item => item._id.toString())
+      if (!categoryIdArray.includes(category)) {
+        errors.push({ message: '類別欄位並不存在' })
+        return res.render('new', {
+          createRecord: true,
+          errors, name, date, categories,
+          categoryId: category,
+          amount
         })
+      }
+
+      // if exists, we proceed to update record
+      return Record.create({
+        name,
+        date: new Date(date + " GMT+00:00"),
+        amount: Number(amount),
+        userId,
+        categoryId: category
+      })
+      .then(() => {
+        req.flash('success_msg', '紀錄已經成功建立')
+        res.redirect('/')
+      })
 
     } catch (err) { next(err) }
   },
@@ -158,8 +156,8 @@ module.exports = {
       }
 
       if (errors.length) {
-        console.log(errors)
         return res.render('new', {
+          record: { _id },
           errors, name, date, categories,
           categoryId: category,
           amount
@@ -167,31 +165,30 @@ module.exports = {
       }
 
       // check if category exists or not
-      // if exists, we proceed to update record
       // if not, we remind user the error
-      return Category.findById(category)
-        .then(category => {
-          if (!category) {
-            errors.push({ message: '類別欄位並不存在' })
-            return res.render('new', {
-              errors, name, date, categories,
-              categoryId: category,
-              amount
-            })
-          }
-
-          return Record.findOne({ _id, userId })
-            .then(record => {
-              record.name = name
-              record.date = new Date(date + " GMT+00:00")
-              record.amount = Number(amount)
-              record.categoryId = category
-              record.save()
-            })
-            .then(() => {
-              req.flash('success_msg', '紀錄已經成功修改')
-              res.redirect('/')
-            })
+      const categoryIdArray = categories.map(item => item._id.toString())
+      if (!categoryIdArray.includes(category)) {
+        errors.push({ message: '類別欄位並不存在' })
+        return res.render('new', {
+          record: { _id },
+          errors, name, date, categories,
+          categoryId: category,
+          amount
+        })
+      }
+      
+      // if exists, we proceed to update record
+      return Record.findOne({ _id, userId })
+        .then(record => {
+          record.name = name
+          record.date = new Date(date + " GMT+00:00")
+          record.amount = Number(amount)
+          record.categoryId = category
+          record.save()
+        })
+        .then(() => {
+          req.flash('success_msg', '紀錄已經成功修改')
+          res.redirect('/')
         })
 
     } catch (err) { next(err) }
