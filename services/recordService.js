@@ -27,14 +27,16 @@ module.exports = {
         errors.push({ message: '金額欄位不為負數' })
       }
 
+      // if any error occurs, return error object
+      if (errors.length) return errorObj
+
       // check if category exists or not
       const categoryIdArray = categories.map(item => item._id.toString())
       if (!categoryIdArray.includes(category)) {
         errors.push({ message: '類別欄位並不存在' })
+        return errorObj
       }
 
-      // if any error occurs, return error object
-      if (errors.length) return errorObj
       // otherwise, return 'allPass' string
       return 'allPass'
 
