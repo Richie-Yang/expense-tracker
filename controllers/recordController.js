@@ -36,9 +36,22 @@ module.exports = {
       })
 
       // calculate totalAmount
-      const totalAmount = records.length ? 
+      let totalAmount = records.length ? 
         records.map(record => record.amount).reduce((x, y) => x + y) : 0
       
+      // decimal adjustment for totalAmount before rendered on index page
+      switch (true) {
+        case (totalAmount >= 1_000_000_000):
+          // can your money hit this mark? if so, send me some please XD
+          totalAmount = (totalAmount / 1_000_000_000).toFixed(3) + 'B'
+          break
+        case (totalAmount >= 1_000_000):
+          totalAmount = (totalAmount / 1_000_000).toFixed(3) + 'M'
+          break
+        case (totalAmount >= 1_000):
+          totalAmount = (totalAmount / 1_000).toString() + 'K'
+          break
+      }
 
       return res.render('index', { 
         categories, categoryId, totalAmount, records 
