@@ -1,6 +1,7 @@
 const moment = require('moment')
 const Record = require('../models/record')
 const Category = require('../models/category')
+const { recordInputCheck } = require('../services/recordService')
 
 
 module.exports = {
@@ -55,58 +56,31 @@ module.exports = {
       .catch(err => next(err))
   },
 
-  postRecord: async (req, res, next) => {
-    try {
-      const userId = req.user._id
-      const { name, date, category, amount } = req.body
-      const categories = await Category.find().lean()
-      const errors = []
+  postRecord: (req, res, next) => {
+    const userId = req.user._id
+    const { name, date, category, amount } = req.body
 
-      // form input pre-check
-      if (!name.trim() || !date || !category || !amount) {
-        errors.push({ message: '所有欄位都是必填' })
-      }
 
-      if (Number(amount) < 0) {
-        errors.push({ message: '金額欄位不為負數' })
-      }
+    return recordInputCheck('post', req)
+      .then(result => {
+        if (result !== 'allPass') {
+          // if exists, we proceed to update record
+          return res.render('new', result)
+        }
 
-      if (errors.length) {
-        return res.render('new', {
-          createRecord: true,
-          errors, name, date, categories, 
-          categoryId: category,
-          amount
+        return Record.create({
+          name,
+          date: new Date(date + " GMT+00:00"),
+          amount: Number(amount),
+          userId,
+          categoryId: category
         })
-      }
-
-      // check if category exists or not
-      // if not, we remind user the error
-      const categoryIdArray = categories.map(item => item._id.toString())
-      if (!categoryIdArray.includes(category)) {
-        errors.push({ message: '類別欄位並不存在' })
-        return res.render('new', {
-          createRecord: true,
-          errors, name, date, categories,
-          categoryId: category,
-          amount
+        .then(() => {
+          req.flash('success_msg', '紀錄已經成功建立')
+          res.redirect('/')
         })
-      }
-
-      // if exists, we proceed to update record
-      return Record.create({
-        name,
-        date: new Date(date + " GMT+00:00"),
-        amount: Number(amount),
-        userId,
-        categoryId: category
       })
-      .then(() => {
-        req.flash('success_msg', '紀錄已經成功建立')
-        res.redirect('/')
-      })
-
-    } catch (err) { next(err) }
+      .catch(err => next(err))
   },
 
   editRecord: async (req, res, next) => {
@@ -138,60 +112,33 @@ module.exports = {
     } catch (err) { next(err) }
   },
 
-  putRecord: async (req, res, next) => {
-    try {
-      const userId = req.user._id
-      const _id = req.params.recordId
-      const { name, date, category, amount } = req.body
-      const categories = await Category.find().lean()
-      const errors = []
+  putRecord: (req, res, next) => {
+    const userId = req.user._id
+    const _id = req.params.recordId
+    const { name, date, category, amount } = req.body
 
-      // form input pre-check
-      if (!name.trim() || !date || !category || !amount) {
-        errors.push({ message: '所有欄位都是必填' })
-      }
 
-      if (Number(amount) < 0) {
-        errors.push({ message: '金額欄位不為負數' })
-      }
+    return recordInputCheck('put', req)
+      .then(result => {
+        if (result !== 'allPass') {
+          // if exists, we proceed to update record
+          return res.render('new', result)
+        }
 
-      if (errors.length) {
-        return res.render('new', {
-          record: { _id },
-          errors, name, date, categories,
-          categoryId: category,
-          amount
-        })
-      }
-
-      // check if category exists or not
-      // if not, we remind user the error
-      const categoryIdArray = categories.map(item => item._id.toString())
-      if (!categoryIdArray.includes(category)) {
-        errors.push({ message: '類別欄位並不存在' })
-        return res.render('new', {
-          record: { _id },
-          errors, name, date, categories,
-          categoryId: category,
-          amount
-        })
-      }
-      
-      // if exists, we proceed to update record
-      return Record.findOne({ _id, userId })
-        .then(record => {
-          record.name = name
-          record.date = new Date(date + " GMT+00:00")
-          record.amount = Number(amount)
-          record.categoryId = category
-          record.save()
-        })
-        .then(() => {
-          req.flash('success_msg', '紀錄已經成功修改')
-          res.redirect('/')
-        })
-
-    } catch (err) { next(err) }
+        return Record.findOne({ _id, userId })
+          .then(record => {
+            record.name = name
+            record.date = new Date(date + " GMT+00:00")
+            record.amount = Number(amount)
+            record.categoryId = category
+            return record.save()
+          })
+          .then(() => {
+            req.flash('success_msg', '紀錄已經成功修改')
+            res.redirect('/')
+          })
+      })
+      .catch(err => next(err))
   },
 
   deleteRecord: (req, res, next) => {
