@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const moment = require('moment')
+const passport = require('passport')
 const User = require('../models/user')
 const transporter = require('../config/nodemailer')
 
@@ -31,7 +32,6 @@ module.exports = {
 
       // check user exists or not based on email
       let user = await User.findOne({ email })
-      console.log(user)
 
       // user is found, but it's not verified yet
       if (user) {
@@ -56,10 +56,11 @@ module.exports = {
         const hash = await bcrypt.hash(password, salt)
         // if user has name set, we create one
         if (!name) name = email.split('@')[0]
-        await User.create({ name, email, password: hash })
+        const user = await User.create({ name, email, password: hash })
+        req.session.passport = { user: user._id.toString() }
 
-        req.flash('success_msg', '帳號已經註冊成功')
-        return res.redirect(`/users/login`)
+        req.flash('success_msg', '帳號已經註冊成功，請接著做信箱驗證')
+        return res.redirect('/auth/local/page')
       } 
 
       // if yes, we remind user to use another email account
