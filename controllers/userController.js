@@ -30,45 +30,36 @@ module.exports = {
       }
 
       // check user exists or not based on email
-      const user = await User.findOne({ email })
-        .then(user => {
+      let user = await User.findOne({ email })
+      console.log(user)
 
-          // user is found, but it's not verified yet
-          if (user) {
-            if (!user.isActive) {
-              const now = moment()
-              const diff = now.diff(user.createdAt)
-              const duration = moment.duration(diff)
+      // user is found, but it's not verified yet
+      if (user) {
+        if (!user.isActive) {
+          const now = moment()
+          const diff = now.diff(user.createdAt)
+          const duration = moment.duration(diff)
 
-              // if user does not verify within 60 mins
-              // then we automatically delete that account
-              if (duration.asMinutes() > 60) {
-                user.remove()
-                return null
-              }
-            }
-
-            return user
+          // if user does not verify within 60 mins
+          // then we automatically delete that account
+          if (duration.asMinutes() > 60) {
+            await user.remove()
+            user = null
           }
-        })
+        }
+      }
 
       // check user exists or not based on previous return
       if (!user) {
         // if not, we create new account for the user
-        return bcrypt.genSalt(10)
-          .then(salt => bcrypt.hash(password, salt))
-          .then(hash => {
-            // if user has name set, we create one
-            if (!name) name = email.split('@')[0]
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(password, salt)
+        // if user has name set, we create one
+        if (!name) name = email.split('@')[0]
+        await User.create({ name, email, password: hash })
 
-            return User.create({
-              name, email, password: hash
-            })
-              .then(() => {
-                req.flash('success_msg', '帳號已經註冊成功')
-                return res.redirect(`/users/login`)
-              })
-          })
+        req.flash('success_msg', '帳號已經註冊成功')
+        return res.redirect(`/users/login`)
       } 
 
       // if yes, we remind user to use another email account
@@ -103,30 +94,10 @@ module.exports = {
       // and we get both userId and validationCode
       const validationCode = req.query.activate
       const userId = validationCode.split('!')[0]
+      const userStatus = { isActive: false }
 
       // check if user can be found with userId
       const user = await User.findById(userId)
-        .then(user => {
-          // if user not found, just redirect back to login page
-          if (!user) return null
-
-          // if validationCodes are matched, return user object
-          if (validationCode !== user.validationCode) {
-            return { isActive: false }
-          }
-
-          const now = moment()
-          const diff = now.diff(user.validationTime)
-          const duration = moment.duration(diff)
-          // if validationCodes are matched, return user object
-          if (duration.asMinutes() > 5) {
-            return { isActive: false }
-          }
-
-          // if everything correct, just activate the user
-          user.isActive = true
-          return user.save()
-        })
 
       // if not user is found, do the following 
       if (!user) {
@@ -134,13 +105,24 @@ module.exports = {
         return res.redirect('/users/login')
       }
 
+      const now = moment()
+      const diff = now.diff(user.validationTime)
+      const duration = moment.duration(diff)
+      // if validation check are all met, set true
+      userStatus.isActive = 
+        validationCode === user.validationCode && duration.asMinutes() < 5
+
+
       // if user is not verified yet, do the following 
-      if (!user.isActive) {
+      if (!userStatus.isActive) {
         req.flash('alert_msg', '認證連結已經過期，請再重新發送認證信件')
         return res.redirect('/auth/local/page')
       }
 
-      // if everything is correct, do the following 
+      // if everything is correct, just do the following
+      user.isActive = true
+      await user.save()
+
       req.flash('success_msg', '電子信箱已經成功認證，請再重新登入')
       return res.redirect(`/users/login`)
     } catch (err) { next(err) }
@@ -161,19 +143,16 @@ module.exports = {
       // every time you hit send verification email link
       // we regenerate new code and record the current time
       const user = await User.findById(userId)
-        .then(user => {
-          const validationSalt = bcrypt.genSaltSync(3)
-          const validationHash = bcrypt.hashSync(
-            user._id.toString(), validationSalt
-          )
-          const validationCode = `${user._id}!${validationHash}`
-
-          // set validationCode for verification link check later
-          user.validationCode = validationCode
-          // set validationTime to prevent link works forever
-          user.validationTime = moment()
-          return user.save()
-        })
+      const validationSalt = await bcrypt.genSaltSync(3)
+      const validationHash = await bcrypt.hashSync(
+        user._id.toString(), validationSalt
+      )
+      const validationCode = `${user._id}!${validationHash}`
+      // set validationCode for verification link check later
+      user.validationCode = validationCode
+      // set validationTime to prevent link works forever
+      user.validationTime = moment()
+      await user.save()
 
       // set email content here
       const mailOptions = {

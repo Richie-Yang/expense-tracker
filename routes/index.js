@@ -21,7 +21,7 @@ router.post('/users/login', passport.authenticate('local', { failureRedirect: '/
 router.get('/users/logout', userController.logout)
 
 // routing for local email verification
-router.get('/auth/local/callback', authenticatedCheck, userController.localCallback)
+router.get('/auth/local/callback', userController.localCallback)
 router.get('/auth/local/page', authenticatedCheck, userController.verifyPage)
 router.get('/auth/local/verify', authenticatedCheck, userController.verify)
 
