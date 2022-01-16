@@ -9,7 +9,10 @@ module.exports = {
     try {
       const userId = req.user._id
       const categoryId = req.query.category
+      const timeRange = req.query.timeRange
       const sort = { _id: 'desc', date: 'desc' }
+      const fromTimeArray = []
+      const toTimeArray = []
 
       // find all categories and rearrange as new array
       const categories = await Category.find().lean()
@@ -18,12 +21,44 @@ module.exports = {
         icon: item.icon
       }))
 
+      if (timeRange) {
+        const regexForFromTime = 
+          /^(\d{4})\/?(\d{1,2})?\/?(\d{1,2})?\s?\-?\s?/g
+        const regexForToTime =
+          /\s\-\s(\d{4})?\/?(\d{1,2})?\/?(\d{1,2})?/g
+
+        let m1, m2
+        do {
+          m1 = regexForFromTime.exec(timeRange)
+
+          if (m1) {
+            for (let i = 1; i < m1.length; i++) {
+              fromTimeArray.push(m1[i])
+            }
+          }
+        } while (m1)
+
+        do {
+          m2 = regexForToTime.exec(timeRange)
+
+          if (m2) {
+            for (let i = 1; i < m2.length; i++) {
+              toTimeArray.push(m2[i])
+            }
+          }
+        } while (m2)
+      }
+
+
+      const fromTime = moment(fromTimeArray).format()
+      const toTime = moment(toTimeArray).format()
+
       // if categoryId is not selected or is selected as 'all'
       // just simply extract all record data from database
       // otherwise, extract data based on selected category
       const records = categoryId === undefined || categoryId === 'all' ?
-        await Record.find({ userId }).lean().sort(sort) :
-        await Record.find({ userId, categoryId }).lean().sort(sort)
+        await Record.find({ $and: [{ userId }] }).lean().sort(sort) :
+        await Record.find({ $and: [{ userId }, { categoryId }] }).lean().sort(sort)
 
       // reArrange records and insert both icon and date data
       records.forEach((item, index, array) => {

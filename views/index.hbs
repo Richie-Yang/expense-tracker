@@ -1,18 +1,28 @@
 {{> message}}
 
-<form action="/" method="GET">
-  <select id="sort-bar" class="form-select" aria-label="Default select example" name="category">
-    <option value="all">全部</option>
-    {{#each categories}}
-      {{#ifCond this._id ../categoryId }}
-      <option value="{{this._id}}" selected>{{this.name}}</option>
-      {{else}}
-      <option value="{{this._id}}">{{this.name}}</option>
-      {{/ifCond}}
-    {{/each}}
-  </select>
 
-  <button id="function-submit-button" class="d-none" type="submit"></button>
+<form action="/" method="GET">
+  <div class="row">
+    <div class="col-4">
+      <select id="sort-bar" class="form-select" aria-label="Default select example" name="category">
+        <option value="all">全部</option>
+        {{#each categories}}
+        {{#ifCond this._id ../categoryId }}
+        <option value="{{this._id}}" selected>{{this.name}}</option>
+        {{else}}
+        <option value="{{this._id}}">{{this.name}}</option>
+        {{/ifCond}}
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="col-6">
+      <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="ex: 2022/1/16 - 2022/2/1" name="timeRange" value="">
+    </div>
+
+    <div class="col-2">
+      <button id="function-submit-button" class="btn btn-outline-secondary mx-auto d-block" type="submit">搜尋</button>
+    </div>
 </form>
 
 <div class="d-flex justify-content-between mt-4">
