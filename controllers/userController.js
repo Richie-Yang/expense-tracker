@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs')
 const moment = require('moment')
-const passport = require('passport')
 const User = require('../models/user')
-const transporter = require('../config/nodemailer')
+const { verifyEmailSent } = require('../services/userService')
 
 
 module.exports = {
@@ -135,45 +134,10 @@ module.exports = {
 
   verify: async(req, res, next) => {
     try {
-      const userId = req.user._id.toString()
-
-      // in order to make verification email
-      // we set some attributes to user in database
-      // then also create validationCode from userId
-
-      // every time you hit send verification email link
-      // we regenerate new code and record the current time
-      const user = await User.findById(userId)
-      const validationSalt = await bcrypt.genSaltSync(3)
-      const validationHash = await bcrypt.hashSync(
-        user._id.toString(), validationSalt
-      )
-      const validationCode = `${user._id}!${validationHash}`
-      // set validationCode for verification link check later
-      user.validationCode = validationCode
-      // set validationTime to prevent link works forever
-      user.validationTime = moment()
-      await user.save()
-
-      // set email content here
-      const mailOptions = {
-        to: user.email,
-        subject: `家庭記帳本 帳號認證`,
-        text: `請點擊以下的連結:\n${process.env.LOCAL_CALLBACK_URL}?activate=${user.validationCode}`
-      }
-
-      // using nodemailer to send verification email to the user
-      return transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log('Email sent: ' + info.response)
-        }
-
-        // whatever the result, just redirect back to verify page
-        req.flash('success_msg', '認證信件已經發送，請到註冊信箱確認是否收到')
-        return res.redirect('/auth/local/page')
-      })
+      await verifyEmailSent(req)
+      // whatever the result, just redirect back to verify page
+      req.flash('success_msg', '認證信件已經發送，請到註冊信箱確認是否收到')
+      return res.redirect('/auth/local/page')
     } catch (err) { next(err) }
   }
 }
