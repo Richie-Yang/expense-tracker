@@ -1,7 +1,7 @@
 const moment = require('moment')
 const Record = require('../models/record')
 const Category = require('../models/category')
-const { recordInputCheck } = require('../services/recordService')
+const recordService = require('../services/recordService')
 
 
 module.exports = {
@@ -9,10 +9,9 @@ module.exports = {
     try {
       const userId = req.user._id
       const categoryId = req.query.category
-      const timeRange = req.query.timeRange
+      let timeRange = req.query.timeRange
       const sort = { _id: 'desc', date: 'desc' }
-      const fromTimeArray = []
-      const toTimeArray = []
+      let warning_msg
 
       // find all categories and rearrange as new array
       const categories = await Category.find().lean()
@@ -21,44 +20,22 @@ module.exports = {
         icon: item.icon
       }))
 
-      if (timeRange) {
-        const regexForFromTime = 
-          /^(\d{4})\/?(\d{1,2})?\/?(\d{1,2})?\s?\-?\s?/g
-        const regexForToTime =
-          /\s\-\s(\d{4})?\/?(\d{1,2})?\/?(\d{1,2})?/g
-
-        let m1, m2
-        do {
-          m1 = regexForFromTime.exec(timeRange)
-
-          if (m1) {
-            for (let i = 1; i < m1.length; i++) {
-              fromTimeArray.push(m1[i])
-            }
-          }
-        } while (m1)
-
-        do {
-          m2 = regexForToTime.exec(timeRange)
-
-          if (m2) {
-            for (let i = 1; i < m2.length; i++) {
-              toTimeArray.push(m2[i])
-            }
-          }
-        } while (m2)
-      }
-
-
-      const fromTime = moment(fromTimeArray).format()
-      const toTime = moment(toTimeArray).format()
-
       // if categoryId is not selected or is selected as 'all'
       // just simply extract all record data from database
       // otherwise, extract data based on selected category
+      const timeObj = recordService.timeQueryParsing(timeRange)
+      const fromTimeToTime = recordService.timeQueryConvert(timeObj)
+      if (fromTimeToTime.$gte.toString() === 'Invalid Date' || 
+        fromTimeToTime.$lte.toString() === 'Invalid Date') {
+        warning_msg = '時間數值有誤，請打正確時間'
+        fromTimeToTime.$gte = new Date([1970, 1, 1])
+        fromTimeToTime.$lte = new Date(moment().format())
+        timeRange = ''
+      }
+
       const records = categoryId === undefined || categoryId === 'all' ?
-        await Record.find({ $and: [{ userId }] }).lean().sort(sort) :
-        await Record.find({ $and: [{ userId }, { categoryId }] }).lean().sort(sort)
+        await Record.find({ userId, date: fromTimeToTime }).lean().sort(sort) :
+        await Record.find({ userId, categoryId, date: fromTimeToTime }).lean().sort(sort)
 
       // reArrange records and insert both icon and date data
       records.forEach((item, index, array) => {
@@ -89,7 +66,7 @@ module.exports = {
       }
 
       return res.render('index', { 
-        categories, categoryId, totalAmount, records 
+        categories, categoryId, totalAmount, records, timeRange, warning_msg 
       })
     } catch (err) { next(err) }
   },
@@ -109,7 +86,7 @@ module.exports = {
     const { name, date, category, amount } = req.body
 
 
-    return recordInputCheck('post', req)
+    return recordService.recordInputCheck('post', req)
       .then(result => {
         if (result !== 'allPass') {
           // if exists, we proceed to update record
@@ -166,7 +143,7 @@ module.exports = {
     const { name, date, category, amount } = req.body
 
 
-    return recordInputCheck('put', req)
+    return recordService.recordInputCheck('put', req)
       .then(result => {
         if (result !== 'allPass') {
           // if exists, we proceed to update record
@@ -176,7 +153,8 @@ module.exports = {
         return Record.findOne({ _id, userId })
           .then(record => {
             record.name = name
-            record.date = new Date(date + " GMT+00:00")
+            record.date = new Date(date)
+            // record.date = new Date(date + " GMT+00:00")
             record.amount = Number(amount)
             record.categoryId = category
             return record.save()
